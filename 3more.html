@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Советские времена</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            padding-top: 0;
+            overflow: auto;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            margin-top: 20px;
+        }
+        #infoText { 
+            padding: 2% 5% 4% 5%;
+            margin: 2% 5% 0 5%;
+            background: white; 
+            z-index: 0; 
+            max-width: auto;
+            text-align: left; 
+            font-size: 20px;
+            border-radius: 3%;
+        }
+        #infoTextButton {
+            display: inline-block;
+            text-align: center;
+            line-height: 50px;
+            box-sizing: border-box;
+            background-color: rgb(240, 127, 127);
+            font-size: 20px;
+            margin: 1%;
+            padding: 0 2% 0 2%;
+            border: 0;
+        }
+        #importantText {
+            background-color: rgb(240, 127, 127);
+            padding: 1% 2% 1% 2%;
+        }
+        #img {
+            margin: 2% 2% 2% 2%;
+            z-index: 0; 
+            max-width: auto;
+            text-align: center; 
+            height: 100%;
+        }
+        #imgBorderRadius {
+            border-radius: 5%;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* Пропорция 16:9 */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 85%;
+            height: 85%;
+            margin: auto;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Как появилась школа: от Древней Руси до современности</h1>
+    <div id="infoText">
+        <h2>Школа советского периода</h2>
+        <p>Становление советской системы образования можно разделить на следующие этапы:</p>
+        <ul style="margin: 0">
+            <li>В 1918 году были приняты «Положение о единой трудовой школе» и «Декларация о единой трудовой школе». Введён запрет на религиозные учения. Школа стала двухступенчатой: на первой ступени обучали детей с 8 до 13 лет, на второй — с 14 до 17 лет. Открылись бесплатные трудовые школы, где изучали письмо, чтение, математику, но уклон был на труд. </li>
+            <li>В 1930-х годах школа стала авторитарной — утратилась ценность личности и главной целью обучения стало воспитание коммунистов. В это время введено обязательное начальное образование.</li>
+            <li>В годы войны образование пережило сильный кризис — не хватало учителей, учебной литературы, ученики работали на заводах. </li>
+            <li>В 1958 году началась школьная реформа. Обучение стало 10-летним, а получение среднего образования — обязательным.</li>
+            <li>С 1980 года появился 11 класс, но распространенной практикой было пропускать один год, так что многие всё равно учились 10 лет.</li>
+        </ul>
+        <div class="video-wrapper">
+            <iframe id="imgBorderRadius" src="https://www.youtube.com/embed/jii2KNgTeyE?si=r2uzVWr4d4iW7lnt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div id="importantText">
+            <p>Педагогика советского периода складывалась в тяжёлые времена для народа, но шла по восходящей линии. Именно в советское время сложилась система обучения, которой мы пользуемся по большей части до сих пор.</p>
+        </div>
+    </div>
+    <p style="text-align: center;"><a href="http://localhost:8000/example/test.html"><button id="infoTextButton"><b>Назад</b></button></a></p>
+    <footer>
+        <p>Развитие школ в России</p>
+    </footer>
+</body>
+</html>

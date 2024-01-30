@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Развитие школ в России</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            padding-top: 0;
+            overflow: auto;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            bottom: 0;
+            margin-top: 20px;
+            z-index: 70;
+        }
+        #container {
+            /*width: 95vw;*/ 
+            /*height: 80vh;*/
+            margin: 0 auto;
+        }
+        #buttonContainer {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
+        #toggleRotateButton, #previousCameraButton, #cameraButton, #moreButtons, #testButton {
+            display: inline-block;
+            margin: 20px 20px 10px 10px;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            box-sizing: border-box;
+            background-color: rgb(240, 127, 127);
+            z-index: 100;
+            border: 0;
+        }
+        #previousCameraButton, #cameraButton, #infoText {
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        #otherButtonsContainer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        #rotateButtonContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: absolute;  
+            bottom: 0;  
+        }
+        #toggleRotateButton, #testButton {
+            opacity: 0;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            transform: translateY(0);  /* Изменено: кнопка изначально под кнопкой "=" */
+            pointer-events: none;
+        }
+        #toggleRotateButton.show, #testButton.show {
+            opacity: 1;
+            transform: translateY(-90px);  /* Когда кнопка видна, она возвращается на исходную позицию */
+            pointer-events: auto;
+        }
+        #infoText {
+            position: fixed; 
+            right: 10px; 
+            top: 10px; 
+            padding: 1%; 
+            margin-top: 5%;
+            background: white; 
+            z-index: 100; 
+            max-width: 700px;
+            text-align: right; 
+            font-size: 19px;
+            border-radius: 10%;
+        }
+        #infoTextButton {
+            display: inline-block;
+            width: auto;
+            height: auto;
+            text-align: center;
+            line-height: 50px;
+            box-sizing: border-box;
+            background-color: rgb(240, 127, 127);
+            font-size: 18px;
+            margin: 0 2% 2% 0;
+            padding: 0 2% 0 2%;
+            border: 0;
+        }
+        #infoTextLeft {
+            text-align: left;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+    <div id="infoText"></div>
+    <div id="buttonContainer">
+        <div id="rotateButtonContainer">
+            <button id="toggleRotateButton" style="font-size: 25px;"><b>360<sup>o</sup></b></button>
+            <button id="testButton" style="font-size: 25px;"><b>test</b></button>
+        </div>
+        <div id="otherButtonsContainer">
+            <button id="moreButtons" style="font-size: 40px;"><b>=</b></button> 
+            <button id="previousCameraButton" style="font-size: 40px;"><b><</b></button> 
+            <button id="cameraButton" style="font-size: 40px;"><b>></b></button>
+        </div>
+    </div>
+    <section>
+        <h1 style="text-align: center;">Как появилась школа: от Древней Руси до современности</h1>
+        <div id="container"></div>
+        <script type="module">
+            import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.1/examples/jsm/loaders/GLTFLoader.js'; //Выгрузка моделей
+            import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.1/examples/jsm/controls/OrbitControls.js'; //Вращение сцены
+
+            var scene = new THREE.Scene(); //Добавление сцены и камеры
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 30, 30);
+            camera.lookAt(0, 8, 0);
+
+            var renderer = new THREE.WebGLRenderer(); //Рендер
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xf4f4f4);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById("container").appendChild(renderer.domElement);
+
+            var light = new THREE.DirectionalLight(0xf4f4f4, 0.5); //Основной и первый источник света | в дальнейшем можно удалить
+            light.position.set(5, 5, 5);
+            light.castShadow = true;
+            light.shadow.mapSize.width = 1024;
+            light.shadow.mapSize.height = 1024;
+            light.shadow.camera.near = 0.5;
+            light.shadow.camera.far = 50;
+            scene.add(light);
+            
+            var planeMaterial = new THREE.MeshLambertMaterial({ //материал сцены
+                color: 0xf4f4f4, 
+                transparent: true, 
+                opacity: 10 
+            });
+            var planeGeometry = new THREE.PlaneGeometry(500, 20); //Геометрия сцены
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.receiveShadow = true;
+            plane.rotation.x = -Math.PI / 2;
+            scene.add(plane);
+
+            var controls = new OrbitControls(camera, renderer.domElement); //Вращение сцены
+            controls.enabled = false; // Изначально отключено
+            /*controls.enableZoom = false; //Отключить масштабирование и перемещение сцены
+            controls.enablePan = false;*/
+
+            var initialCameraPosition = camera.position.clone();
+            var initialCameraLookAt = new THREE.Vector3(20, 20, 20); // Первоначальная точка взгляда | камеры
+
+            function moveCameraToPosition(toPosition, toLookAt) { // Анимация перемещения камеры при включении режима 360
+                var toState = {
+                    px: toPosition.x,
+                    py: toPosition.y,
+                    pz: toPosition.z,
+                    lx: toLookAt.x,
+                    ly: toLookAt.y,
+                    lz: toLookAt.z
+                };
+                new TWEEN.Tween(cameraState)
+                    .to(toState, 2000)
+                    .easing(TWEEN.Easing.Circular.Out)
+                    .onUpdate(function() {
+                        camera.position.set(cameraState.px, cameraState.py, cameraState.pz);
+                        camera.lookAt(cameraState.lx, cameraState.ly, cameraState.lz);
+                    })
+                    .start();
+            }
+            var isButtonPressedOnce = false; 
+            toggleRotateButton.addEventListener('click', function() {
+                if (!isButtonPressedOnce) {
+                    controls.enabled = !controls.enabled; // Переключает состояние вращения
+                    if (controls.enabled) {
+                        toggleRotateButton.style.backgroundColor = 'rgb(253, 80, 80)';
+                        isButtonPressedOnce = true;
+                        var toPosition = new THREE.Vector3(20, 20, 20);
+                        var toLookAt = new THREE.Vector3(0, 0, 0);
+                        moveCameraToPosition(toPosition, toLookAt);
+
+                        // Скрываем кнопки и информационное поле
+                        document.getElementById('previousCameraButton').style.opacity = "0";
+                        document.getElementById('cameraButton').style.opacity = "0";
+                        document.getElementById('infoText').style.opacity = "0";
+                        setTimeout(function(){
+                            document.getElementById('previousCameraButton').style.visibility = "hidden";
+                            document.getElementById('cameraButton').style.visibility = "hidden";
+                            document.getElementById('infoText').style.visibility = "hidden";
+                        }, 500);
+                    } else {
+                        toggleRotateButton.style.backgroundColor = '';
+                        camera.position.copy(initialCameraPosition);
+                        camera.lookAt(initialCameraLookAt);
+                    }
+                } else {
+                    location.reload(); // Обновите страницу при втором нажатии
+                }
+            });
+
+            var isButtonClicked = false; // переменная для отслеживания состояния кнопки
+
+            document.getElementById("moreButtons").addEventListener("click", function() {
+                var moreButtons = document.getElementById("moreButtons");
+                var toggleRotateButton = document.getElementById("toggleRotateButton");
+                var testButton = document.getElementById("testButton");
+
+                if (!isButtonClicked) {
+                    moreButtons.style.backgroundColor = 'rgb(253, 80, 80)'; // красный цвет при первом нажатии
+                    isButtonClicked = true;
+                } else {
+                    moreButtons.style.backgroundColor = 'rgb(240, 127, 127)'; // возвращаем исходный цвет при повторном нажатии
+                    isButtonClicked = false;
+                }
+
+                toggleRotateButton.classList.toggle("show");
+                testButton.classList.toggle("show");
+            });
+            var gltfLoader = new GLTFLoader();
+            var loadedModels = [];
+            var modelPaths = [ //Загрузка моделей
+                'old_school.glb',
+                'petr_I_cadet.glb',
+                'soviet_school.glb',
+                'new_school.glb'
+            ];
+            var modelTexts = 
+            ['<h3 id="infoTextLeft">Первые школы на Руси</h3><p id="infoTextLeft">988 год — это время крещения Руси и зарождения школьного образования.</p> <p id="infoTextLeft">Князь Владимир Святославович издаёт указ: дети бояр должны учиться книжному делу...</p> <a href="http://localhost:8000/example/1more.html"> <button id="infoTextButton"><b>Подробнее</b></button> </a>',
+            '<h3 id="infoTextLeft">Школы в досоветской России</h3><p id="infoTextLeft">До Петра I развитие образования шло медленно. Изредка открывались частные школы, а также была создана Славяно-греко-латинская академия — первое высшее учреждение в стране...</p> <a href="http://localhost:8000/example/2more.html"> <button id="infoTextButton"><b>Подробнее</b></button> </a>',
+            '<h3 id="infoTextLeft">Школа советского периода</h3> <p id="infoTextLeft">В 1918 году были приняты «Положение о единой трудовой школе» и «Декларация о единой трудовой школе». Введён запрет на религиозные учения. Школа стала двухступенчатой...</p> <a href="http://localhost:8000/example/3more.html"> <button id="infoTextButton"><b>Подробнее</b></button> </a>',
+            '<h3 id="infoTextLeft">Новая школа в России</h3> <p id="infoTextLeft">В 2012 году был принят действующий закон «Об образовании». Он считается одним из самых демократичных в мире, поскольку выделяет такую форму получения образования как семейное обучение...</p> <a href="http://localhost:8000/example/4more.html"> <button id="infoTextButton"><b>Подробнее</b></button> </a>' ]; 
+            
+            var mouse = new THREE.Vector2();
+            var raycaster = new THREE.Raycaster();
+
+            var selectedModel = null;
+
+            var currentIndex = 0; //Для дальнейшей рабоыт с индексами
+            var modelsLoaded = false;
+
+            var loadPromises = modelPaths.map((modelPath, index) => new Promise((resolve) => { //Работа с моделями 
+                gltfLoader.load(modelPath, function(gltf) {
+                    var model = gltf.scene; //Положение моделей
+                    model.position.set((index - 1.5) * 30, -4, 0);
+                    model.castShadow = true;
+                    model.userData.text = modelTexts[index];
+
+                    var lightLeft = new THREE.DirectionalLight(0xffffff, 0.2); //Дополнительный свет для моделей
+                    lightLeft.position.set(-10, 5, 0);
+                    scene.add(lightLeft);
+
+                    var lightRight = new THREE.DirectionalLight(0xffffff, 0.2); //Дополнительный свет для моделей
+                    lightRight.position.set(10, 5, 0);
+                    scene.add(lightRight);
+
+                    var lightCenter = new THREE.DirectionalLight(0xffffff, 0.3); //Дополнительный свет для моделей
+                    lightRight.position.set(0, 0, 5);
+                    scene.add(lightCenter);
+        
+                    scene.add(model);
+
+                    resolve({ index, model }); // Resolve with model and index
+                }, undefined, function (error) {
+                    console.error(error);
+                });
+            }));
+
+            Promise.all(loadPromises).then((loadedModelsData) => {
+                // Sort models by index and add to loadedModels
+                loadedModels = loadedModelsData.sort((a, b) => a.index - b.index).map(data => data.model);
+
+                // Массив цветов для платформ в формате 0xRRGGBB
+                var platformColors = ['rgb(240, 127, 127)', 'rgb(253, 80, 80)', 'rgb(240, 127, 127)', 'rgb(253, 80, 80)']; // зеленый, оранжевый
+
+                // Создаем платформы для каждой модели
+                for (let i = 0; i < 4; i++) {
+                    var platformGeometry = new THREE.BoxGeometry(20, 0.1, 15);
+                    var platformMaterial = new THREE.MeshLambertMaterial({ color: platformColors[i] });
+                    var platform = new THREE.Mesh(platformGeometry, platformMaterial);
+                    platform.position.set((i - 1.5) * 30, 0, 0);
+                    scene.add(platform);
+                }
+
+                animate();
+            });
+
+            function onMouseClick(event) { //Для работы с мышью
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(loadedModels, true);
+
+                //const infoText = document.getElementById('infoText');
+        
+                if (intersects.length > 0) {
+                    const intersected = intersects[0].object;
+
+                    let selectedObject = intersected;
+                    while (!selectedObject.userData.text && selectedObject.parent) {
+                        selectedObject = selectedObject.parent;
+                    }
+                } 
+            }
+            window.addEventListener("click", onMouseClick, false);
+            animate();
+
+            var cameraButton = document.getElementById('cameraButton'); //Кнопка перемещения камеры от одной модели к другой
+            cameraButton.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % loadedModels.length; 
+                moveCameraToModel(loadedModels[currentIndex]); 
+            });
+
+            var previousCameraButton = document.getElementById('previousCameraButton'); //Кнопка перемещения камеры от одной модели к другой
+            previousCameraButton.addEventListener('click', function() {
+                currentIndex = (currentIndex - 1 + loadedModels.length) % loadedModels.length; 
+                moveCameraToModel(loadedModels[currentIndex]); 
+            });
+
+            var cameraState = {
+                px: camera.position.x,
+                py: camera.position.y,
+                pz: camera.position.z,
+                lx: initialCameraLookAt.x,
+                ly: initialCameraLookAt.y,
+                lz: initialCameraLookAt.z
+            };
+
+            function moveCameraToModel(toModel) {
+                if (!toModel) {
+                    console.error('Either fromModel or toModel is undefined');
+                    return;
+                }
+                var fromPosition = camera.position.clone();
+                var toPosition = toModel.position.clone();
+                toPosition.y += 20; // Установите желаемую высоту, на которой должна находиться камера над моделью
+                toPosition.x += 20;
+                toPosition.z += 20;
+
+                var toLookAt = toModel.position.clone();
+                toLookAt.y += 5;
+                toLookAt.x += 2;
+
+                var toState = {
+                    px: toPosition.x,
+                    py: toPosition.y,
+                    pz: toPosition.z,
+                    lx: toLookAt.x,
+                    ly: toLookAt.y,
+                    lz: toLookAt.z
+                };
+
+                var fromLookAt = new THREE.Vector3().setFromMatrixPosition(toModel.matrixWorld);
+
+                var infoText = document.getElementById('infoText');
+                infoText.innerHTML = ""; // устанавливаем текст в пустое значение перед началом анимации
+
+                new TWEEN.Tween(cameraState)
+                    .to(toState, 2000)
+                    .easing(TWEEN.Easing.Circular.Out)
+                    .onUpdate(function() {
+                        camera.position.set(cameraState.px, cameraState.py, cameraState.pz);
+                        camera.lookAt(cameraState.lx, cameraState.ly, cameraState.lz);
+                    })
+                    .onComplete(function() {
+                        infoText.innerHTML = toModel.userData.text;
+                    })
+                    .start();
+            }
+
+            function animate() { //Анимации
+                requestAnimationFrame(animate);
+                TWEEN.update();
+
+                if (loadedModels.length === modelPaths.length && !modelsLoaded) {  
+                    moveCameraToModel(loadedModels[currentIndex]);
+                    modelsLoaded = true;   
+                }
+
+                if(selectedModel) {
+                    //selectedModel.rotation.y += 0.01; //Вращение конкретной модели вокруг оси
+                }
+                renderer.render(scene, camera);
+            }
+
+            // Установите размер рендерера, чтобы он соответствовал размерам контейнера
+            var container = document.getElementById('container');
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+
+            // Обновите соотношение сторон камеры, чтобы оно соответствовало новым размерам
+            camera.aspect = container.offsetWidth / container.offsetHeight;
+            camera.updateProjectionMatrix();
+
+            window.addEventListener('resize', function() {
+                // Обновите размер рендерера и соотношение сторон камеры
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+            });
+        </script>
+    </section>
+    <footer>
+        <p>Развитие школ в России</p>
+    </footer>
+</body>
+</html>
