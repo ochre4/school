@@ -1,0 +1,21 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "test project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test comand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "00000000"
+  ],
+  "author": "Alex",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.160.0"
+  }
+}
