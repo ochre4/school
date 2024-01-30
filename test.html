@@ -127,6 +127,8 @@
         <h1 style="text-align: center;">Как появилась школа: от Древней Руси до современности</h1>
         <div id="container"></div>
         <script type="module">
+            import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.1/examples/jsm/loaders/GLTFLoader.js'; //Выгрузка моделей
+            import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.1/examples/jsm/controls/OrbitControls.js'; //Вращение сцены
 
             var scene = new THREE.Scene(); //Добавление сцены и камеры
             var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
